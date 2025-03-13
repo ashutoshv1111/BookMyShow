@@ -5,21 +5,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import java.util.Date;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Document
+@NoArgsConstructor
 @Builder
-public class Theatre {
+@Document
+public class ShowSeats {
     @Id
-    private String theatreId;
-    private String theatreName;
-    private Address address;
-    private List<String> seatIds;
-    private List<String> showIds;
+    private String showSeatsId;
+    private SeatType seatType;
+    private Long seatNumber;
+    private int price;
+    private Date bookedDate;
+    private boolean booked;
+    private String showId;
 }

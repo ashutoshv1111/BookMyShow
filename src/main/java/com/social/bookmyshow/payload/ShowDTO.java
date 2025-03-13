@@ -1,25 +1,33 @@
 package com.social.bookmyshow.payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mongodb.internal.connection.Time;
+import com.social.bookmyshow.model.Movie;
+import com.social.bookmyshow.model.Seat;
 import com.social.bookmyshow.model.Ticket;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document
+@Builder
 public class ShowDTO {
-    private String movieId;
-    private String screenId;
-    private Integer totalNoOfTickets;
-    private List<Ticket> tickets;
-    private Time startTime;
-    private Time endTime;
+    @JsonProperty("startTime")
+    private LocalTime startTime;
+    @JsonProperty("endTime")
+    private LocalTime endTime;
+    @JsonProperty("date")
     private Date date;
+    @JsonProperty("movieId")
+    private String movieId;
+    @JsonProperty("theatreId")
+    private String theatreId;
 }

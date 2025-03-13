@@ -14,8 +14,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Seat {
     @Id
     private String seatId;
+    private SeatType seatType;
     private Long seatNumber;
-    private String screenId;
-    private Boolean isAvailable;
+    private String TheatreId;
 
+    public Seat(Long seatNumber, SeatType seatType, String theatreId) {
+        this.seatNumber = seatNumber;
+        this.seatType = seatType;
+        this.TheatreId = theatreId;
+    }
 }

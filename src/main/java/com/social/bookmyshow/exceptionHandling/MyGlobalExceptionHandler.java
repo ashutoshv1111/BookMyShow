@@ -1,6 +1,7 @@
 package com.social.bookmyshow.exceptionHandling;
 
 
+import com.social.bookmyshow.payload.APIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

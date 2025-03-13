@@ -27,7 +27,7 @@ public class AppUser {
     private String password;
     @Email
     private String email;
-    private List<String> ticketIds;
     private Role role;
     private Address address;
+    private List<String> ticketIds;
 }

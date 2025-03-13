@@ -1,5 +1,7 @@
-package com.social.bookmyshow.model;
+package com.social.bookmyshow.payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.social.bookmyshow.model.SeatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,25 +9,19 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document
 @Builder
-public class Ticket {
+public class ShowSeatsDTO {
     @Id
-    private String ticketId;
-    private Date date;
-    private String movieTitle;
-    private String theatreName;
-    private Address address;
-    private String bookedSeats;
-    private Integer price;
+    @JsonProperty("showId")
     private String showId;
-    private String userId;
-
+    @JsonProperty("SILVERSeatPrice")
+    private Integer SILVERSeatPrice;
+    @JsonProperty("GOLSeatPrice")
+    private Integer GOLSeatPrice;
 }
