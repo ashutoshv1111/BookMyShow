@@ -97,7 +97,7 @@ public class TicketServiceImplementation implements TicketService {
         showRepository.save(show);
         showSeatsRepository.saveAll(showSeats);
 
-        return TicketTransformer.toTicketResponseDTO(ticket,show,movie,theatre,seats,totalAmount);
+        return TicketTransformer.toTicketResponseDTO(show,movie,theatre,seats,totalAmount);
     }
 
     private Boolean isSeatAvailable(List<ShowSeats> showSeatList, List<String> seats) {
