@@ -1,5 +1,6 @@
 package com.social.bookmyshow.service;
 
+import com.social.bookmyshow.Transformers.TicketTransformer;
 import com.social.bookmyshow.exceptionHandling.APIException;
 import com.social.bookmyshow.model.*;
 import com.social.bookmyshow.payload.TicketDTO;
@@ -96,14 +97,7 @@ public class TicketServiceImplementation implements TicketService {
         showRepository.save(show);
         showSeatsRepository.saveAll(showSeats);
 
-        return TicketResponseDTO.builder()
-                .date(show.getDate())
-                .movieTitle(movie.getTitle())
-                .theatreName(theatre.getTheatreName())
-                .address(theatre.getAddress())
-                .bookedSeats(seats)
-                .price(totalAmount)
-                .build();
+        return TicketTransformer.toTicketResponseDTO(ticket,show,movie,theatre,seats,totalAmount);
     }
 
     private Boolean isSeatAvailable(List<ShowSeats> showSeatList, List<String> seats) {
