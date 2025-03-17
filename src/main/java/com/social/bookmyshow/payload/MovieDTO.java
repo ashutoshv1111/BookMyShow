@@ -6,13 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MovieDTO {
+public class MovieDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String movieId;
     private String title;
     private List<String> actors;

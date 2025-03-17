@@ -33,6 +33,7 @@ public class TicketServiceImplementation implements TicketService {
     private TheatreRepository theatreRepository;
     @Autowired
     private PaymentService paymentService;
+
     @Transactional
     @Override
     public TicketResponseDTO addBooking(TicketDTO ticketDTO) {
@@ -98,7 +99,7 @@ public class TicketServiceImplementation implements TicketService {
 
     private Integer assignSeatsParallel(List<ShowSeats> showSeatList, List<String> requestSeats) {
         return showSeatList.parallelStream()
-                .filter(showSeat -> requestSeats.contains(showSeat.getShowSeatsId().toString()))
+                .filter(showSeat -> requestSeats.contains(showSeat.getShowSeatsId()))
                 .mapToInt(showSeat -> {
                     showSeat.setBooked(true);
                     return showSeat.getPrice();

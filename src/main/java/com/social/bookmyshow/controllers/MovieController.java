@@ -5,6 +5,7 @@ import com.social.bookmyshow.payload.MovieDTO;
 import com.social.bookmyshow.service.MovieService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

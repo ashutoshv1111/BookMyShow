@@ -10,6 +10,8 @@ import com.social.bookmyshow.repositories.ShowRepository;
 import com.social.bookmyshow.repositories.TicketRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class MovieServiceImplementation implements MovieService {
     private ModelMapper modelMapper;
 
     @Override
+    @Cacheable(value="movies",key="'allMovies'")
     public List<MovieDTO> getMovies() {
         List<Movie> movies = movieRepository.findAll();
         List<MovieDTO> movieDTOS = movies.stream().map(movie -> modelMapper.map(movie, MovieDTO.class)).collect(Collectors.toList());
@@ -35,6 +38,7 @@ public class MovieServiceImplementation implements MovieService {
     }
 
     @Override
+    @Cacheable(value = "movies", key = "#movieId")
     public MovieDTO getMovieById(String movieId) {
         if (movieRepository.findById(movieId).isEmpty()) {
             throw new APIException("Movie not found");
@@ -43,6 +47,7 @@ public class MovieServiceImplementation implements MovieService {
     }
 
     @Override
+    @CacheEvict(value = "movies", allEntries = true)
     public MovieDTO createMovie(MovieDTO movieDTO) {
         if(movieRepository.findById(movieDTO.getMovieId()).isPresent()) {
             throw new APIException("Movie already exists");
@@ -52,6 +57,7 @@ public class MovieServiceImplementation implements MovieService {
     }
 
     @Override
+    @CacheEvict(value = "movies", allEntries = true)
     public MovieDTO updateMovie(String movieId, MovieDTO movieDTO) {
         if (movieRepository.findById(movieId).isEmpty()) {
             throw new APIException("Movie not found");
@@ -62,6 +68,7 @@ public class MovieServiceImplementation implements MovieService {
     }
 
     @Override
+    @CacheEvict(value = "movies", allEntries = true)
     public MovieDTO deleteMovie(String movieId) {
         if (movieRepository.findById(movieId).isEmpty()) {
             throw new APIException("Movie not found");
