@@ -14,8 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MovieDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class MovieDTO{
     private String movieId;
     private String title;
     private List<String> actors;
