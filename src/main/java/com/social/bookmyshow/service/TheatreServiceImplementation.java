@@ -11,6 +11,8 @@ import com.social.bookmyshow.repositories.SeatRepository;
 import com.social.bookmyshow.repositories.TheatreRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class TheatreServiceImplementation implements TheatreService {
 
 
     @Override
+    @Cacheable(value="Theatre", key="#theatreId")
     public Theatre getTheatre(String theatreId) {
         return theatreRepository.findById(theatreId)
                 .map(theatre -> modelMapper.map(theatre, Theatre.class))
@@ -35,6 +38,7 @@ public class TheatreServiceImplementation implements TheatreService {
     }
 
     @Override
+    @Cacheable(value="Theatre")
     public List<TheatreDTO> getTheatres() {
         List<Theatre> theatres = theatreRepository.findAll();
         if (theatres.isEmpty()) {
@@ -46,6 +50,7 @@ public class TheatreServiceImplementation implements TheatreService {
     }
 
     @Override
+    @CacheEvict(value="Theatre")
     public TheatreDTO addTheatre(String theatreId, TheatreDTO theatreDTO) {
         if (theatreRepository.findById(theatreId).isPresent()) {
             throw new APIException("Theatre already exists");
@@ -56,6 +61,7 @@ public class TheatreServiceImplementation implements TheatreService {
     }
 
     @Override
+    @CacheEvict(value="Theatre")
     public TheatreDTO addTheaterSeat(SeatDTO seatDTO) {
             Theatre theatre = theatreRepository.findById(seatDTO.getTheatreId())
                     .orElseThrow(() -> new APIException("There is no theatre"));

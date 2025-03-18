@@ -2,6 +2,7 @@ package com.social.bookmyshow.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,4 +31,7 @@ public class AppUser {
     private Role role;
     private Address address;
     private List<String> ticketIds;
+
+    public AppUser(@NotBlank @Size(min = 3, max = 20) String username, @NotBlank @Size(max = 50) @Email String email, String encode) {
+    }
 }

@@ -8,26 +8,23 @@ import com.social.bookmyshow.payload.MovieDTO;
 import com.social.bookmyshow.repositories.MovieRepository;
 import com.social.bookmyshow.repositories.ShowRepository;
 import com.social.bookmyshow.repositories.TicketRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MovieServiceImplementation implements MovieService {
-    @Autowired
-    private MovieRepository movieRepository;
-    @Autowired
-    private ShowRepository showRepository;
-    @Autowired
-    private TicketRepository ticketRepository;
-    @Autowired
-    private ModelMapper modelMapper;
+
+    private final MovieRepository movieRepository;
+    private final ShowRepository showRepository;
+    private final TicketRepository ticketRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     @Cacheable(value="movies",key="'allMovies'")
@@ -36,7 +33,6 @@ public class MovieServiceImplementation implements MovieService {
         List<MovieDTO> movieDTOS = movies.stream().map(movie -> modelMapper.map(movie, MovieDTO.class)).collect(Collectors.toList());
         return movieDTOS;
     }
-
     @Override
     @Cacheable(value = "movies", key = "#movieId")
     public MovieDTO getMovieById(String movieId) {
@@ -77,6 +73,18 @@ public class MovieServiceImplementation implements MovieService {
         movieRepository.delete(movie);
         return modelMapper.map(movie, MovieDTO.class);
     }
+    @Cacheable(value = "movies", key = "#query")
+    @Override
+    public List<MovieDTO> searchMovies(String query) {
+        List<Movie> movies = movieRepository.searchMovies(query);
+        if (movies.isEmpty()) {
+            throw new APIException("No movies found matching the query: " + query);
+        }
+        return movies.stream()
+                .map(movie -> modelMapper.map(movie, MovieDTO.class))
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public Long totalCollection(String movieId) {

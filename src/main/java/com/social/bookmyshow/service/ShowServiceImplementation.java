@@ -8,6 +8,8 @@ import com.social.bookmyshow.payload.ShowSeatsDTO;
 import com.social.bookmyshow.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class ShowServiceImplementation implements ShowService {
     private ShowSeatsRepository showSeatsRepository;
 
     @Override
+    @Cacheable(value = "Show")
     public List<ShowDTO> getShow(String movieId) {
         if (!movieRepository.existsById(movieId)) {
             throw new APIException("Movie not found");
@@ -40,6 +43,7 @@ public class ShowServiceImplementation implements ShowService {
     }
 
     @Override
+    @CacheEvict(value="Show")
     public ShowDTO createShow(ShowDTO showDTO) {
         boolean showExists = showRepository.existsByTheatreIdAndDateAndStartTimeAndEndTime(
                 showDTO.getTheatreId(), showDTO.getDate(), showDTO.getStartTime(), showDTO.getEndTime());
@@ -79,10 +83,10 @@ public class ShowServiceImplementation implements ShowService {
 
 
     @Override
+    @CacheEvict(value="Show")
     public ShowDTO associateShowSeats(ShowSeatsDTO showSeatsDTO) {
         Show show = showRepository.findById(showSeatsDTO.getShowId())
                 .orElseThrow(() -> new APIException("Show not found"));
-
         if (show.getShowId() == null) {
             throw new APIException("Show ID cannot be null while associating seats.");
         }

@@ -6,8 +6,11 @@ import com.social.bookmyshow.model.*;
 import com.social.bookmyshow.payload.TicketDTO;
 import com.social.bookmyshow.payload.TicketResponseDTO;
 import com.social.bookmyshow.repositories.*;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,26 +18,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TicketServiceImplementation implements TicketService {
-
-    @Autowired
-    private TicketRepository ticketRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ShowRepository showRepository;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private ShowSeatsRepository showSeatsRepository;
-    @Autowired
-    private MovieRepository movieRepository;
-    @Autowired
-    private TheatreRepository theatreRepository;
-    @Autowired
-    private PaymentService paymentService;
+    private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
+    private final ShowRepository showRepository;
+    private final ModelMapper modelMapper;
+    private final ShowSeatsRepository showSeatsRepository;
+    private final MovieRepository movieRepository;
+    private final TheatreRepository theatreRepository;
+    private final PaymentService paymentService;
 
     @Transactional
+    @CacheEvict(value="Ticket")
     @Override
     public TicketResponseDTO addBooking(TicketDTO ticketDTO) {
         Show show = showRepository.findById(ticketDTO.getShowId())
@@ -110,6 +106,7 @@ public class TicketServiceImplementation implements TicketService {
         return String.join(",", requestSeats);
     }
 
+    @Cacheable(value="Ticket")
     @Override
     public TicketDTO getTicket(String id) {
         Ticket ticket = ticketRepository.findById(id)

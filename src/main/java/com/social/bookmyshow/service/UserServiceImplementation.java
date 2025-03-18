@@ -7,28 +7,26 @@ import com.social.bookmyshow.model.*;
 import com.social.bookmyshow.payload.TicketResponseDTO;
 import com.social.bookmyshow.payload.UserDTO;
 import com.social.bookmyshow.repositories.*;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImplementation implements UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TicketRepository ticketRepository;
-    @Autowired
-    private TheatreRepository theatreRepository;
-    @Autowired
-    private ShowRepository showRepository;
-    @Autowired
-    private MovieRepository movieRepository;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final TicketRepository ticketRepository;
+    private final TheatreRepository theatreRepository;
+    private final ShowRepository showRepository;
+    private final MovieRepository movieRepository;
+    private final ModelMapper modelMapper;
 
+    @CacheEvict(value="User")
     @Override
     public UserDTO updateUser(String userId, UserDTO userDTO) {
      AppUser user=userRepository.findById(userId)
@@ -39,6 +37,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    @Cacheable(value="User")
     public UserDTO getUser(String userId) {
         if (userRepository.existsById(userId)) {
             return modelMapper.map(userRepository.findById(userId), UserDTO.class);
@@ -48,6 +47,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    @CacheEvict(value="User")
     public UserDTO deleteUser(String userId) {
             AppUser user=userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("AppUser", "id", userId));
             userRepository.deleteById(userId);
@@ -55,6 +55,7 @@ public class UserServiceImplementation implements UserService {
         }
 
     @Override
+    @Cacheable(value="UserTickets")
     public List<TicketResponseDTO> getUserTickets(String userId) {
         AppUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));

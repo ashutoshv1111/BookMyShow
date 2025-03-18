@@ -42,6 +42,10 @@ public class MovieController {
         MovieDTO deletedMovieDTO=movieService.deleteMovie(movieId);
         return new ResponseEntity<>(deletedMovieDTO,HttpStatus.OK);
     }
+    @GetMapping("/movies/search")
+    public ResponseEntity<List<MovieDTO>> searchMovies(@RequestParam String query) {
+        return new ResponseEntity<>(movieService.searchMovies(query),HttpStatus.OK);
+    }
     @GetMapping("/movies/totalCollection/{movieId}")
     public ResponseEntity<Long> totalCollection(@PathVariable String movieId) {
             Long result = movieService.totalCollection(movieId);
