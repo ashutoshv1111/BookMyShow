@@ -8,12 +8,13 @@ import com.social.bookmyshow.payload.TicketResponseDTO;
 import com.social.bookmyshow.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ public class TicketServiceImplementation implements TicketService {
     private final PaymentService paymentService;
 
     @Transactional
-    @CacheEvict(value="Ticket")
+    @CacheEvict(value = "Ticket")
     @Override
     public TicketResponseDTO addBooking(TicketDTO ticketDTO) {
         Show show = showRepository.findById(ticketDTO.getShowId())
@@ -74,16 +75,26 @@ public class TicketServiceImplementation implements TicketService {
         ticket.setUserId(appUser.getUserId());
         ticket.setShowId(show.getShowId());
 
-        ticket = ticketRepository.save(ticket);
+        try {
+            ticket = ticketRepository.save(ticket);
+            synchronized (this) {
+                if (appUser.getTicketIds() == null) {
+                    appUser.setTicketIds(new ArrayList<>());
+                }
+                appUser.getTicketIds().add(ticket.getTicketId());
 
-        synchronized (this) {
-            appUser.getTicketIds().add(ticket.getTicketId());
-            show.getTicketIds().add(ticket.getTicketId());
+                if (show.getTicketIds() == null) {
+                    show.setTicketIds(new ArrayList<>());
+                }
+                show.getTicketIds().add(ticket.getTicketId());
+            }
+
+            userRepository.save(appUser);
+            showRepository.save(show);
+            showSeatsRepository.saveAll(showSeats);
+        } catch (OptimisticLockingFailureException e) {
+            throw new APIException("Concurrency issue: Another transaction modified the record. Please retry.");
         }
-
-        userRepository.save(appUser);
-        showRepository.save(show);
-        showSeatsRepository.saveAll(showSeats);
 
         return TicketTransformer.toTicketResponseDTO(show, movie, theatre, seats, totalAmount);
     }
@@ -106,7 +117,7 @@ public class TicketServiceImplementation implements TicketService {
         return String.join(",", requestSeats);
     }
 
-    @Cacheable(value="Ticket")
+    @Cacheable(value = "Ticket")
     @Override
     public TicketDTO getTicket(String id) {
         Ticket ticket = ticketRepository.findById(id)

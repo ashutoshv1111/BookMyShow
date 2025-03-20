@@ -82,12 +82,12 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 			<version>3.4.3</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch -->
+		<!-- Spring Boot Starter for Elasticsearch -->
 		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>8.17.3</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
 		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
 <!--		<dependency>-->

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -23,4 +24,6 @@ public class ShowSeats {
     private Date bookedDate;
     private boolean booked;
     private String showId;
+    @Version
+    private int version;
 }

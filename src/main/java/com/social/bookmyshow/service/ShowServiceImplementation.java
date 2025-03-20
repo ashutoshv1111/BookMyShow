@@ -38,7 +38,7 @@ public class ShowServiceImplementation implements ShowService {
             throw new APIException("Movie not found");
         }
         List<Show> shows = showRepository.findByMovieId(movieId);
-        List<ShowDTO> showDTOs = shows.stream().map(show -> modelMapper.map(show, ShowDTO.class)).collect(Collectors.toList());
+        List<ShowDTO> showDTOs = shows.stream().map(show -> ShowTransformer.toShowDTOTransformer(show)).collect(Collectors.toList());
         return showDTOs;
     }
 

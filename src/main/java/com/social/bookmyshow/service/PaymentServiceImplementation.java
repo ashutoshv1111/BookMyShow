@@ -12,8 +12,8 @@ public class PaymentServiceImplementation implements PaymentService{
         public boolean processPayment(String userId, int amount) {
             CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
                 try {
-                    Thread.sleep(2000);
-                    return Math.random() > 0.2;
+                    Thread.sleep(30000);
+                    return true;
                 } catch (InterruptedException e) {
                     return false;
                 }

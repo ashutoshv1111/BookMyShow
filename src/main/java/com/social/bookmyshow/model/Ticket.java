@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
@@ -27,5 +28,6 @@ public class Ticket {
     private Integer price;
     private String showId;
     private String userId;
-
+    @Version
+    private Integer version;
 }

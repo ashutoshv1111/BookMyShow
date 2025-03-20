@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -50,5 +51,9 @@ public class MovieController {
     public ResponseEntity<Long> totalCollection(@PathVariable String movieId) {
             Long result = movieService.totalCollection(movieId);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+    @GetMapping("/movies/search/elastic")
+    public ResponseEntity<List<MovieDTO>> searchMoviesByElasticSearch(@RequestParam String query) throws IOException {
+        return new ResponseEntity<>(movieService.searchMoviesByElasticSearch(query),HttpStatus.OK);
     }
 }

@@ -1,5 +1,8 @@
 package com.social.bookmyshow.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.social.bookmyshow.exceptionHandling.APIException;
 import com.social.bookmyshow.model.Movie;
 import com.social.bookmyshow.model.Show;
@@ -14,6 +17,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +29,29 @@ public class MovieServiceImplementation implements MovieService {
     private final ShowRepository showRepository;
     private final TicketRepository ticketRepository;
     private final ModelMapper modelMapper;
+
+    private final ElasticsearchClient elasticsearchClient;
+
+    @Override
+    @Cacheable(value="movies",key="'allMovies'")
+    public List<MovieDTO> searchMoviesByElasticSearch(String query) throws IOException {
+        SearchResponse<Movie> response = elasticsearchClient.search(s -> s
+                        .index("movies")
+                        .query(q -> q
+                                .wildcard(w -> w
+                                        .field("title")
+                                        .value("*" + query + "*")
+                                )
+                        ),
+                Movie.class);
+
+        List<Movie>movies= response.hits().hits().stream()
+                .map(Hit::source)
+                .collect(Collectors.toList());
+        return movies.stream()
+                .map(movie -> modelMapper.map(movie, MovieDTO.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Cacheable(value="movies",key="'allMovies'")
